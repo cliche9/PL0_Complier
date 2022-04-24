@@ -1,0 +1,36 @@
+{
+    "keywords": [
+        "begin",
+        "call",
+        "do",
+        "end",
+        "if",
+        "odd",
+        "procedure",
+        "read",
+        "then",
+        "var",
+        "while",
+        "write"
+    ],
+    "operator": {
+        "+": "plus",
+        "-": "minus",
+        "*": "times",
+        "/": "over",
+        "=": "eql",
+        "<": "lss",
+        "<=": "leq",
+        ">": "gtr",
+        ">=": "geq",
+        "#": "neq",
+        ":=": "assign"
+    },
+    "boundary": {
+        "(": "lparen",
+        ")": "rparen",
+        ";": "semicolon",
+        ",": "comma",
+        ".": "period"
+    }
+}
