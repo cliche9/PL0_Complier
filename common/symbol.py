@@ -1,5 +1,6 @@
 from enum import Enum
 
+# 字符类型
 class chartype(Enum):
     NULL = 0
     DIGIT = 1,
@@ -7,6 +8,7 @@ class chartype(Enum):
     OPERATOR = 3,
     BOUNDARY = 4
 
+# 关键词
 keywords = [
     "begin",
     "call",
@@ -22,6 +24,7 @@ keywords = [
     "write"
 ]
 
+# 运算符
 operatorsym = {
     "+": "plus",
     "-": "minus",
@@ -36,6 +39,7 @@ operatorsym = {
     ":=": "assign"
 }
 
+# 界符
 boundarysym = {
     "(": "lparen",
     ")": "rparen",

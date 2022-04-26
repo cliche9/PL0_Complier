@@ -1,3 +1,7 @@
+"""
+PL0 编译器相关Exception
+"""
+
 class Error(Exception):
     """Base class for exceptions for pl0 comlier."""
     pass
