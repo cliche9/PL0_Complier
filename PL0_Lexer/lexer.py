@@ -6,7 +6,6 @@
 """
 import sys, os
 sys.path.append("..");
-import json
 from common.symbol import chartype, keywords, operatorsym, boundarysym
 from common.exception import LexerError
 
@@ -167,10 +166,10 @@ if __name__ == "__main__":
     # 初始化PL0词法分析器
     lexer = lexer()
     # 输出重定向
-    dir_path = 'PL0_code2022'
+    dir_path = '../PL0_code2022'
     for file in os.listdir(os.path.join(dir_path, 'input')):
         infile = os.path.join(dir_path, 'input', file)
-        outfile = os.path.join(dir_path, 't_out', file.split('.')[0] + '.out')
+        outfile = os.path.join(dir_path, 'test_out', file.split('.')[0] + '.out')
         oldstdout = sys.stdout
         out = open(outfile, 'w')
         sys.stdout = out
