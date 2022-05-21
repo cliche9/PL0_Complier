@@ -16,9 +16,9 @@ protected:
     string message;
 };
 
-class SyntaxException: public exception {
+class ParserException: public exception {
 public: 
-    SyntaxException(string msg): message(msg) {}
+    ParserException(string msg): message(msg) {}
     const char *what()const throw() {
         return message.c_str();
     }
