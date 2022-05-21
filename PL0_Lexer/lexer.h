@@ -24,4 +24,5 @@ private:
     void nextLine();
 
     bool isBoundary(char c);
+    bool isOperator(char c);
 };

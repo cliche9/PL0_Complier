@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include "../common/exception.h"
 
 Lexer::Lexer(istream &in)
     : inFile(in), line(0), offset(0) {}
@@ -57,7 +58,7 @@ void Lexer::Symbolization() {
             /* ========== 界符 ========= */
             input += cur;
             symbol = new Symbol(SymbolType::BOUND, input);
-        } else {
+        } else if (isOperator(cur)) {
             /* ========== 运算符 ========= */
             input += cur;
             if (!inFile.eof() && (cur == ':' || cur == '>' || cur == '<')) {
@@ -67,7 +68,8 @@ void Lexer::Symbolization() {
                     putCharBack(cur);
             }
             symbol = new Symbol(SymbolType::OPT, input);
-        }
+        } else 
+            throw LexerException("Unexpected Character!");
         symbolTable.push_back(symbol);
     }
 }
@@ -107,4 +109,8 @@ void Lexer::putCharBack(char c) {
 
 bool Lexer::isBoundary(char c) {
     return boundaryMapping.count(string(1, c));
+}
+
+bool Lexer::isOperator(char c) {
+    return c == ':' || operatorMapping.count(string(1, c));
 }
