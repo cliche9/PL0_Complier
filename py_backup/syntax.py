@@ -5,7 +5,7 @@
 """
 import sys, os
 sys.path.append("..");
-from common.exception import LexerError, SyntaxError
+from exception import LexerError, SyntaxError
 from py_backup.lexer import lexer
 
 # input: 

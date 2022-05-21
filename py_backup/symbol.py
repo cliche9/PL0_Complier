@@ -3,10 +3,16 @@ from enum import Enum
 # 字符类型
 class chartype(Enum):
     NULL = 0
-    DIGIT = 1,
-    ALPHA = 2,
-    OPERATOR = 3,
+    DIGIT = 1
+    ALPHA = 2
+    OPERATOR = 3
     BOUNDARY = 4
+
+# 标识符类型
+class SymbolKind(Enum):
+    CONSTANT = 0
+    VARIABLE = 1
+    PROCEDURE = 2
 
 # 关键词
 keywords = [

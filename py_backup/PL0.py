@@ -4,7 +4,7 @@ PL0 编译器本体
 
 import os, sys
 from symtable import SymbolTable
-from common.exception import LexerError, SyntaxError
+from exception import LexerError, SyntaxError
 from py_backup.lexer import lexer
 
 if __name__ == "__main__":

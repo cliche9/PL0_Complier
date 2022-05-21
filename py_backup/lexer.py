@@ -2,14 +2,15 @@
 需要进一步优化:
 1. 冗余代码过多 √
 2. 无法正确处理负号 √
-3. 需要按照NDF来写 ?
+3. 需要按照DFA来写 ?
 """
 import sys, os
 sys.path.append("..");
-from common.symbol import chartype, keywords, operatorsym, boundarysym
-from common.exception import LexerError
+from symbol import chartype, keywords, operatorsym, boundarysym
+from exception import LexerError
 
 class lexer(object):
+
     def __init__(self) -> None:
         self.keywords = keywords
         self.wordsym = { keyword: keyword + "sys" for keyword in keywords }
@@ -18,10 +19,6 @@ class lexer(object):
         # 用于保存识别内容
         self.NAME = []
         self.SYM = []
-        # 临时保存变量内容
-        self.current_string = ''
-        # 当前读取字符类型
-        self.current_chartype = chartype.NULL
 
     def identifyWord(self, word):
         # 识别关键词/标识符 --- 单词字符
