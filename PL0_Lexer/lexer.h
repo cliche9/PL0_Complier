@@ -1,3 +1,6 @@
+#ifndef _LEXER_H_
+#define _LEXER_H_
+
 #include "../common/symbol.h"
 #include <iostream>
 #include <list>
@@ -8,8 +11,8 @@ public:
     Lexer(istream &in=cin);
     ~Lexer();
 
-    void Symbolization();
-    void PrintAll(ostream &out);
+    void symbolization();
+    void printAll(ostream &out);
     Symbol *getSymbol();
 
 private:
@@ -23,6 +26,7 @@ private:
     void putCharBack(char c);       // 超前搜索 --- 写回输入串
     void nextLine();
 
-    bool isBoundary(char c);
-    bool isOperator(char c);
+    bool isLegal(char c);
 };
+
+#endif

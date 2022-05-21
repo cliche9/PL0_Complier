@@ -6,23 +6,16 @@
 using std::string;
 using std::ostream;
 
-enum SymbolType {
-    NONE,
-    NUMBER,
-    WORD,
-    OPT,
-    BOUND
-};
-
 class Symbol {
 public:
-    Symbol(SymbolType type, string value);
+    Symbol(SymbolTag tag, string value);
     ~Symbol();
 
-    void Print(ostream &out) const;
+    void print(ostream &out) const;
+    SymbolTag getSymbolTag() const;
 
 private:
-    SymbolType type;
+    SymbolTag tag;
     string value;
 };
 

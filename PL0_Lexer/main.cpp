@@ -7,8 +7,8 @@ int main() {
     ofstream fout("../PL0_code2022/lexer_output/PL0_code.out");
     Lexer lexer(fin);
     try {
-        lexer.Symbolization();
-        lexer.PrintAll(fout);
+        lexer.symbolization();
+        lexer.printAll(fout);
     } catch (exception e) {
         cout << e.what();
     }

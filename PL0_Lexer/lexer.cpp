@@ -13,7 +13,7 @@ Lexer::~Lexer() {
     symbolTable.clear();
 }
 
-void Lexer::Symbolization() {
+void Lexer::symbolization() {
     char cur = EOF;
     string input;
     Symbol *symbol = NULL;
@@ -41,7 +41,8 @@ void Lexer::Symbolization() {
             } while (isdigit(cur));
             if (!eofReached)
                 putCharBack(cur);
-            symbol = new Symbol(SymbolType::NUMBER, input);
+            symbol = new Symbol(SymbolTag::SYM_NUMBER, input);
+
         } else if (isalpha(cur)) {
             /* ========== 变量/关键词 ========= */
             do {
@@ -53,13 +54,15 @@ void Lexer::Symbolization() {
             } while (isalnum(cur));
             if (!eofReached)
                 putCharBack(cur);
-            symbol = new Symbol(SymbolType::WORD, input);
-        } else if (isBoundary(cur)) {
-            /* ========== 界符 ========= */
-            input += cur;
-            symbol = new Symbol(SymbolType::BOUND, input);
-        } else if (isOperator(cur)) {
-            /* ========== 运算符 ========= */
+            // 关键词
+            if (str2tag.count(input))
+                symbol = new Symbol(str2tag.at(input), input);
+            // 变量
+            else 
+                symbol = new Symbol(SymbolTag::SYM_IDENT, input);
+            
+        } else if (isLegal(cur)) {
+            /* ========== 界符/运算符 ========= */
             input += cur;
             if (!inFile.eof() && (cur == ':' || cur == '>' || cur == '<')) {
                 if ((cur = nextChar()) == '=')
@@ -67,16 +70,19 @@ void Lexer::Symbolization() {
                 else
                     putCharBack(cur);
             }
-            symbol = new Symbol(SymbolType::OPT, input);
+            symbol = new Symbol(str2tag.at(input), input);
+            
         } else 
+            /* == 非法字符 == */
             throw LexerException("Unexpected Character!");
+        // 加入符号表
         symbolTable.push_back(symbol);
     }
 }
 
-void Lexer::PrintAll(ostream &out) {
+void Lexer::printAll(ostream &out) {
     for (Symbol *cur : symbolTable)
-        cur->Print(out);
+        cur->print(out);
 }
 
 Symbol *Lexer::getSymbol() {
@@ -107,10 +113,6 @@ void Lexer::putCharBack(char c) {
     inFile.putback(c);   
 }
 
-bool Lexer::isBoundary(char c) {
-    return boundaryMapping.count(string(1, c));
-}
-
-bool Lexer::isOperator(char c) {
-    return c == ':' || operatorMapping.count(string(1, c));
+bool Lexer::isLegal(char c) {
+    return c == ':' || str2tag.count(string(1, c));
 }
