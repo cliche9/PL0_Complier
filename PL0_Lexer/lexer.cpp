@@ -94,6 +94,10 @@ Symbol *Lexer::getSymbol() {
     return ret;
 }
 
+void Lexer::prependSymbol(Symbol *symbol) {
+    symbolTable.push_front(symbol);
+}
+
 void Lexer::nextLine() {
     ++line;
     offset = 0;

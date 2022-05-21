@@ -12,3 +12,7 @@ void Symbol::print(ostream &out) const {
 SymbolTag Symbol::getSymbolTag() const {
     return this->tag;
 }
+
+string Symbol::getValue() const {
+    return this->value;
+}

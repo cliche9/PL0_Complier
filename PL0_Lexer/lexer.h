@@ -14,6 +14,7 @@ public:
     void symbolization();
     void printAll(ostream &out);
     Symbol *getSymbol();
+    void prependSymbol(Symbol *symbol);
 
 private:
     istream &inFile;

@@ -13,6 +13,7 @@ public:
 
     void print(ostream &out) const;
     SymbolTag getSymbolTag() const;
+    string getValue() const;
 
 private:
     SymbolTag tag;

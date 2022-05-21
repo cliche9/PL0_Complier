@@ -8,9 +8,10 @@
                 "-std=c++11",
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
-                "${fileDirname}/lexer.cpp",
                 "${fileDirname}/../common/symbol.cpp",
+                "${fileDirname}/../PL0_Lexer/lexer.cpp",
+                "${fileDirname}/parser.cpp",
+                "${fileDirname}/main.cpp",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],
