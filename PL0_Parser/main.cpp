@@ -9,15 +9,15 @@ int main() {
     try {
         lexer.symbolization();
         lexer.printAll(fout);
-    } catch (exception e) {
-        cout << e.what();
+    } catch (exception &e) {
+        cout << e.what() << endl;
     }
 
     Parser parser(&lexer);
     try {
         parser.program();
-    } catch (exception e) {
-        cout << e.what();
+    } catch (exception &e) {
+        cout << e.what() << endl;
     }
     
     return 0;

@@ -27,12 +27,13 @@ void Parser::revoke() {
     symbol = NULL;
 }
 
-int Parser::findToken(string name) {
-    for (int i = 0; i < table[level].size(); i++)
-        if (table[level][i].name == name)
-            return i;
+Identifier *Parser::findIdentifier(string name) {
+    for (int lev = level; lev >= 0; lev--)
+        for (int i = 0; i < table[lev].size(); i++)
+            if (table[lev][i].name == name)
+                return &table[lev][i];
 
-    return -1;
+    return NULL;
 }
 
 void Parser::block() {
@@ -155,7 +156,11 @@ void Parser::procDeclare() {
         ++level;
         block();        // 进入子 proc
         --level;
-        // 6. 结束该 proc
+        // 6. ";": 结束该 proc
+        getSymbol();
+        if(symbol->getSymbolTag() != SYM_SEMICOLON)
+            throw ParserException("Proc: Expected Semicolon At End!");
+        // 7. 预读取下一个符号, 看是否还有Proc
         getSymbol();
         if (symbol == NULL)
             // 代码读取完毕
@@ -165,6 +170,8 @@ void Parser::procDeclare() {
             revoke();
             break;
         }
+        // 预读取不管是否为Proc, 都需要将其放回lexer
+        revoke();
     }
 }
 
@@ -212,10 +219,10 @@ void Parser::assign() {
     getSymbol();
     if (symbol->getSymbolTag() != SYM_IDENT)
         throw ParserException("Assign: Invalid Name!");
-    // 2. 在Table表中查找对应符号的表项Token
-    int tokenIndex = findToken(symbol->getValue());
-    if (tokenIndex == -1 || table[level][tokenIndex].kind != VAR)
-        throw ParserException("Assign: Invalid Token!");
+    // 2. 在Table表中查找对应符号的表项Identifier
+    Identifier *identifier = findIdentifier(symbol->getValue());
+    if (identifier == NULL || identifier->kind != VAR)
+        throw ParserException("Assign: Invalid Identifier!");
     // 3. 读取赋值 ":=" 符号
     getSymbol();
     if (symbol->getSymbolTag() != SYM_ASSIGN)
@@ -271,8 +278,8 @@ void Parser::call() {
     if (symbol->getSymbolTag() != SYM_IDENT)
         throw ParserException("Call: Expected Proc Identifier Here!");
     // 3. 在Table中寻找相应的 Identifier
-    int tokenIndex = findToken(symbol->getValue());
-    if (tokenIndex == -1 || table[level][tokenIndex].kind != PROC)
+    Identifier *identifier = findIdentifier(symbol->getValue());
+    if (identifier == NULL || identifier->kind != PROC)
         throw ParserException("Call: Invalid Identifier!");
 }
 
@@ -306,9 +313,10 @@ void Parser::read() {
         getSymbol();
         if (symbol->getSymbolTag() != SYM_IDENT)
             throw ParserException("READ: Expected Identifier Here!");
-        int tokenIndex = findToken(symbol->getValue());
-        Token token = table[level][tokenIndex];
-        if (tokenIndex == -1 || token.kind != VAR || token.kind != CONST)
+        Identifier *identifier = findIdentifier(symbol->getValue());
+        if (identifier == NULL)
+            throw ParserException("READ: Undefined Identifier!");
+        if (identifier->kind != VAR && identifier->kind != CONST)
             throw ParserException("READ: Invalid Identifier!");
         // 读取分界符, 看是否继续循环
         getSymbol();
@@ -340,8 +348,8 @@ void Parser::write() {
         getSymbol();
         if (symbol->getSymbolTag() != SYM_IDENT)
             throw ParserException("WRITE: Expected Identifier Here!");
-        int tokenIndex = findToken(symbol->getValue());
-        Token token = table[level][tokenIndex];
+        int tokenIndex = findIdentifier(symbol->getValue());
+        Identifier token = table[level][tokenIndex];
         if (tokenIndex == -1 || token.kind != VAR || token.kind != CONST)
             throw ParserException("WRITE: Invalid Identifier!");
         */
@@ -428,17 +436,15 @@ void Parser::term() {
 /* === 读取一个因子, 括号包裹的也算因子, 如a, (a * x + b) === */
 void Parser::factor() {
     getSymbol();
-    int tokenIndex = -1;
-    Token token;
+    Identifier *identifier = NULL;
     switch (symbol->getSymbolTag()) {
         // 数字/标识符, 直接读取
         case SYM_IDENT:
-            tokenIndex = findToken(symbol->getValue());
-            if (tokenIndex == -1)
-                throw ParserException("Factor: No Matched Identifier!");
-            token = table[level][tokenIndex];
-            if (token.kind != VAR && token.kind != CONST)
-                throw ParserException("Factor: Invalid Identifier Kind!");
+            identifier = findIdentifier(symbol->getValue());
+            if (identifier == NULL)
+                throw ParserException("Factor: Undefined Identifier!");
+            if (identifier->kind != VAR && identifier->kind != CONST)
+                throw ParserException("Factor: Invalid Identifier!");
         case SYM_NUMBER:
             break;
         // 左括号

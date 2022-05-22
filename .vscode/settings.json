@@ -18,6 +18,8 @@
         "*.tcc": "cpp",
         "exception": "cpp",
         "fstream": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "iostream": "cpp",
+        "typeinfo": "cpp"
     }
 }

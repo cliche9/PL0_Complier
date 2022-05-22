@@ -14,8 +14,8 @@ enum KIND {
     PROC,
 };
 
-struct Token {
-    Token(string _name = "", KIND _kind = NIL, int _val = 0, int _lev = -1, int _addr = -1):
+struct Identifier {
+    Identifier(string _name = "", KIND _kind = NIL, int _val = 0, int _lev = -1, int _addr = -1):
         name(_name), kind(_kind), value(_val), level(_lev), addr(_addr) {}
     string name;
     KIND kind;
@@ -36,12 +36,12 @@ private:
     Symbol *symbol;
     int level;
     int addr[RECURSIVE_DEPTH];
-    vector<Token> table[RECURSIVE_DEPTH];
+    vector<Identifier> table[RECURSIVE_DEPTH];
     set<string> nameSet;
     
     void getSymbol();               // 读取一个符号
     void revoke();                  // 撤回一个字符
-    int findToken(string name);     // 根据Name在Table中找到对应的表项
+    Identifier *findIdentifier(string name);     // 根据Name在Table中找到对应的表项
     
     void block();                   // 完整程序块
     // Declaration 声明
