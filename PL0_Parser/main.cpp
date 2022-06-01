@@ -4,11 +4,12 @@
 
 int main() {
     ifstream fin("PL0_code2022/input/PL0_code.in");
-    ofstream fout("PL0_code2022/lexer_output/PL0_code.out");
+    ofstream lout("PL0_code2022/lexer_output/PL0_code.out");
+    ofstream pout("PL0_code2022/parser_output/PL0_code_table.out");
     Lexer lexer(fin);
     try {
         lexer.symbolization();
-        lexer.printAll(fout);
+        lexer.printAll(lout);
     } catch (exception &e) {
         cout << e.what() << endl;
     }
@@ -19,6 +20,7 @@ int main() {
     } catch (exception &e) {
         cout << e.what() << endl;
     }
+    parser.printTable(pout);
     
     return 0;
 }

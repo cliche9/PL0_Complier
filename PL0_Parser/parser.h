@@ -14,6 +14,13 @@ enum KIND {
     PROC,
 };
 
+const vector<string> kind2str = {
+    "NONE",
+    "CONSTANT",
+    "VARIABLE",
+    "PROCEDURE",
+};
+
 struct Identifier {
     Identifier(string _name = "", KIND _kind = NIL, int _val = 0, int _lev = -1, int _addr = -1):
         name(_name), kind(_kind), value(_val), level(_lev), addr(_addr) {}
@@ -22,14 +29,19 @@ struct Identifier {
     int value;
     int level;
     int addr;
+    
+    void print(ostream &out) const {
+        out << "NAME: " << name << "\tKIND: " << kind2str[kind] << "\tVAL: " << value << "\tLEVEL: " << level << "\tADR: " << addr << endl;
+    }
 };
 
 
 class Parser {
 public:
     Parser(Lexer *lexer);
-
+    
     void program();
+    void printTable(ostream &out) const;        // 输出符号表
 
 private:
     Lexer *lexer;
@@ -41,7 +53,7 @@ private:
     
     void getSymbol();               // 读取一个符号
     void revoke();                  // 撤回一个字符
-    Identifier *findIdentifier(string name);     // 根据Name在Table中找到对应的表项
+    Identifier *findIdentifier(string name);    // 根据Name在Table中找到对应的表项
     
     void block();                   // 完整程序块
     // Declaration 声明

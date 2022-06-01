@@ -14,6 +14,12 @@ void Parser::program() {
     cout << "Parser Done!\n";
 }
 
+void Parser::printTable(ostream &out) const {
+    for (int i = 0; i < RECURSIVE_DEPTH; i++)
+        for (const Identifier &identifier : table[i])
+            identifier.print(out);
+}
+
 void Parser::getSymbol() {
     if (symbol) {
         delete symbol;
@@ -366,7 +372,7 @@ void Parser::write() {
     }
 }
 
-/* ===  === */
+/* === condition语句判断 === */
 void Parser::cond() {
     getSymbol();
     // odd指令, 判断是否为奇数, 只需读取一个expr即可
