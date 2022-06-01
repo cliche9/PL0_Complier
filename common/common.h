@@ -4,7 +4,16 @@
 #include <iostream>
 #include <vector>
 #include <map>
-using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::istream;
+using std::ifstream;
+using std::ostream;
+using std::ofstream;
+using std::string;
+using std::vector;
+using std::map;
 
 enum SymbolTag {
     SYM_NONE,

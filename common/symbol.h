@@ -2,9 +2,8 @@
 #define _SYMBOL_H_
 
 #include "common.h"
+#include "exception.h"
 #include <iostream>
-using std::string;
-using std::ostream;
 
 class Symbol {
 public:

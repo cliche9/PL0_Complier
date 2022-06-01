@@ -20,6 +20,14 @@ void Parser::printTable(ostream &out) const {
             identifier.print(out);
 }
 
+void Parser::enter(string _name, KIND _kind, int _val, int _lev, int _addr) {
+    table[level].emplace_back(_name, _kind, _val, _lev, _addr);
+}
+
+void Parser::generate(string _op, string _arg1, string _arg2, string _result) {
+    
+}
+
 void Parser::getSymbol() {
     if (symbol) {
         delete symbol;
@@ -100,7 +108,7 @@ void Parser::constDeclare() {
             throw ParserException("Const: Value is not Number!");
         
         // 5. 读取完毕, 将读取的值放入Table
-        table[level].emplace_back(constName, KIND::CONST, stoi(symbol->getValue()), -1, -1);
+        enter(constName, KIND::CONST, stoi(symbol->getValue()), -1, -1);
         // 6. 读取分界符
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -127,7 +135,7 @@ void Parser::varDeclare() {
         if (symbol->getSymbolTag() != SYM_IDENT)
             throw ParserException("Var: Invalid Name!");
         // 3. 将 var 加入Table, 初始值为0
-        table[level].emplace_back(symbol->getValue(), KIND::VAR, 0, level, addr[level]++); 
+        enter(symbol->getValue(), KIND::VAR, 0, level, addr[level]++); 
         // 4. 读取分界符
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -153,7 +161,7 @@ void Parser::procDeclare() {
         if (symbol->getSymbolTag() != SYM_IDENT)
             throw ParserException("Proc: Invalid Name!");
         // 3. 将 proc 加入table
-        table[level].emplace_back(symbol->getValue(), KIND::PROC, -1, level, addr[level]++);
+        enter(symbol->getValue(), KIND::PROC, -1, level, addr[level]++);
         // 4. 读取分界符
         getSymbol();
         if (symbol->getSymbolTag() != SYM_SEMICOLON)

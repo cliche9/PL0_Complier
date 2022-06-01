@@ -1,6 +1,5 @@
 #include "parser.h"
 #include <fstream>
-#include <exception>
 
 int main() {
     ifstream fin("PL0_code2022/input/PL0_code.in");
