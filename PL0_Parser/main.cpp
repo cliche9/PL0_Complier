@@ -2,9 +2,10 @@
 #include <fstream>
 
 int main() {
-    ifstream fin("PL0_code2022/input/PL0_code.in");
+    ifstream fin("PL0_code2022/input/PL0_code1.in");
     ofstream lout("PL0_code2022/lexer_output/PL0_code.out");
-    ofstream pout("PL0_code2022/parser_output/PL0_code_table.out");
+    ofstream pout("PL0_code2022/parser_output/PL0_table_symbol.out");
+    ofstream codeout("PL0_code2022/parser_output/PL0_table_code.out");
     Lexer lexer(fin);
     try {
         lexer.symbolization();
@@ -20,6 +21,7 @@ int main() {
         cout << e.what() << endl;
     }
     parser.printTable(pout);
+    parser.printCode(codeout);
     
     return 0;
 }

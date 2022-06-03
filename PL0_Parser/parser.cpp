@@ -1,13 +1,19 @@
 #include "../common/exception.h"
 #include "parser.h"
 
-Parser::Parser(Lexer *lexer): lexer(lexer), symbol(NULL), level(0) {
+Parser::Parser(Lexer *lexer): lexer(lexer), symbol(NULL), level(0), dx(3) {
     for (int i = 0; i < RECURSIVE_DEPTH; i++)
-        addr[i] = 0;
+        addr[i] = 3;
 }
 
 void Parser::program() {
+    int codeIndex0 = code.size();
+    // JMP指令
+    emit(JMP, 0, 0);
     block();
+    // 回填JMP指令
+    code[codeIndex0].offset = mainCode;
+
     getSymbol();
     if (symbol->getSymbolTag() != SYM_PERIOD)
         throw ParserException("Program: Expected PERIOD at End!");
@@ -20,13 +26,44 @@ void Parser::printTable(ostream &out) const {
             identifier.print(out);
 }
 
+void Parser::printCode(ostream &out) const {
+    for (const Instruction &ins : code)
+        ins.print(out);
+}
+
 void Parser::enter(string _name, KIND _kind, int _val, int _lev, int _addr) {
     table[level].emplace_back(_name, _kind, _val, _lev, _addr);
 }
 
-void Parser::generate(string _op, string _arg1, string _arg2, string _result) {
-    
+void Parser::backpatch(int lev, int index, int val) {
+    if (index >= table[lev].size())
+        throw ParserException("Backpatch: Out of Table Index!");
+    table[lev][index].value = val;
 }
+
+void Parser::emit(INSTRUCTION ins, int lev, int offset) {
+    code.emplace_back(ins, lev, offset);
+}
+
+#ifdef QUAD
+string Parser::newTemp() {
+    return "$T" + to_string(tempNumber++);
+}
+
+void Parser::pushStack(string s) {
+    qStack.push(s);
+}
+
+string Parser::popStack() {
+    string s = qStack.top();
+    qStack.pop();
+    return s;
+}
+
+void Parser::generate(string _op, string _arg1, string _arg2, string _result) {
+    quads.emplace_back(_op, _arg1, _arg2, _result);
+}
+#endif
 
 void Parser::getSymbol() {
     if (symbol) {
@@ -53,8 +90,20 @@ Identifier *Parser::findIdentifier(string name) {
 void Parser::block() {
     if (level >= RECURSIVE_DEPTH)
         throw ParserException("Block: Too Many Recursions!");
+    addr[level] = 3;
+    
     declares();
+
+    if (level == 0)
+        mainCode = code.size() + 1;
+    else
+        table[level - 1].back().addr = code.size() + 1;
+
+    emit(INT, 0, addr[level]);  // 初始化栈空间
+
     statements();
+
+    emit(OPR, 0, 0);            // 退出数据区
 }
 
 void Parser::declares() {
@@ -102,7 +151,7 @@ void Parser::constDeclare() {
         getSymbol();
         if (symbol->getSymbolTag() != SYM_EQL)
             throw ParserException("Const: Assignment Error!");
-        // 4. 读取 const 值
+        // 4. 读取具体常量值
         getSymbol();
         if (symbol->getSymbolTag() != SYM_NUMBER)
             throw ParserException("Const: Value is not Number!");
@@ -135,7 +184,7 @@ void Parser::varDeclare() {
         if (symbol->getSymbolTag() != SYM_IDENT)
             throw ParserException("Var: Invalid Name!");
         // 3. 将 var 加入Table, 初始值为0
-        enter(symbol->getValue(), KIND::VAR, 0, level, addr[level]++); 
+        enter(symbol->getValue(), KIND::VAR, 0, level, addr[level]++);
         // 4. 读取分界符
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -161,7 +210,7 @@ void Parser::procDeclare() {
         if (symbol->getSymbolTag() != SYM_IDENT)
             throw ParserException("Proc: Invalid Name!");
         // 3. 将 proc 加入table
-        enter(symbol->getValue(), KIND::PROC, -1, level, addr[level]++);
+        enter(symbol->getValue(), KIND::PROC, -1, level, -1);
         // 4. 读取分界符
         getSymbol();
         if (symbol->getSymbolTag() != SYM_SEMICOLON)
@@ -243,6 +292,8 @@ void Parser::assign() {
         throw ParserException("Assign: Invalid Assign Symbol!");
     // 4. 调用expr()读取表达式作为右边值
     expr();
+    // 5. 生成目标代码, 读取栈顶
+    emit(STO, level - identifier->level, identifier->addr);
 }
 
 void Parser::compound() {
@@ -278,8 +329,13 @@ void Parser::condition() {
     getSymbol();
     if (symbol->getSymbolTag() != SYM_THEN)
         throw ParserException("Condition: Expected THEN Here!");
-    // 4. 执行后续语句
+    // 4. 生成JPC语句
+    int codeIndex0 = code.size();
+    emit(JPC, 0, 0);
+    // 5. 执行后续语句
     statements();
+    // 6. 回填jpc地址
+    code[codeIndex0].offset = code.size();
 }
 
 void Parser::call() {
@@ -295,6 +351,7 @@ void Parser::call() {
     Identifier *identifier = findIdentifier(symbol->getValue());
     if (identifier == NULL || identifier->kind != PROC)
         throw ParserException("Call: Invalid Identifier!");
+    emit(CAL, level - identifier->level, identifier->addr);
 }
 
 void Parser::whiledo() {
@@ -303,13 +360,19 @@ void Parser::whiledo() {
     if (symbol->getSymbolTag() != SYM_WHILE)
         throw ParserException("WHILEDO: Expected WHILE Here!");
     // 2. 执行条件语句判断
+    int codeIndex0 = code.size();
     cond();
+    int codeIndex1 = code.size();
+    emit(JPC, 0, 0);
     // 3. 读取DO
     getSymbol();
     if (symbol->getSymbolTag() != SYM_DO)
         throw ParserException("WHILEDO: Expected DO Here!");
     // 4. 执行while循环内的语句
     statements();
+
+    emit(JMP, 0, codeIndex0);
+    code[codeIndex1].offset = code.size();
 }
 
 void Parser::read() {
@@ -332,6 +395,9 @@ void Parser::read() {
             throw ParserException("READ: Undefined Identifier!");
         if (identifier->kind != VAR && identifier->kind != CONST)
             throw ParserException("READ: Invalid Identifier!");
+        emit(OPR, 0, READ);
+        emit(STO, level - identifier->level, identifier->addr);
+        
         // 读取分界符, 看是否继续循环
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -358,15 +424,8 @@ void Parser::write() {
     while (true) {
         // 处理当前write
         expr();
-        /** write参数支持expr
-        getSymbol();
-        if (symbol->getSymbolTag() != SYM_IDENT)
-            throw ParserException("WRITE: Expected Identifier Here!");
-        int tokenIndex = findIdentifier(symbol->getValue());
-        Identifier token = table[level][tokenIndex];
-        if (tokenIndex == -1 || token.kind != VAR || token.kind != CONST)
-            throw ParserException("WRITE: Invalid Identifier!");
-        */
+        // 生成WRITE语句
+        emit(OPR, 0, WRITE);
         // 读取分界符, 看是否继续循环
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -386,6 +445,7 @@ void Parser::cond() {
     // odd指令, 判断是否为奇数, 只需读取一个expr即可
     if (symbol->getSymbolTag() == SYM_ODD) {
         expr();
+        emit(OPR, 0, ODD);
         return;
     }
     // 其他指令
@@ -395,31 +455,59 @@ void Parser::cond() {
     getSymbol();
     switch (symbol->getSymbolTag()) {
         case SYM_EQL:
+            expr();
+            emit(OPR, 0, EQL);
+            break;
         case SYM_NEQ:
+            expr();
+            emit(OPR, 0, NEQ);
+            break;
         case SYM_LSS:
+            expr();
+            emit(OPR, 0, LSS);
+            break;
         case SYM_LEQ:
+            expr();
+            emit(OPR, 0, LEQ);
+            break;
         case SYM_GTR:
+            expr();
+            emit(OPR, 0, GTR);
+            break;
         case SYM_GEQ:
+            expr();
+            emit(OPR, 0, GEQ);
             break;
         default:
             throw ParserException("Cond: Invalid Symbol Tag!");
     }
-    expr();
 }
 
 /* === 读取一个expr, expr由多个term通过+/-运算组合而成, 如 a * b + c === */
 void Parser::expr() {
     // 单独读取一次, 以处理+/-表示正负数
     getSymbol();
-    if (symbol->getSymbolTag() != SYM_PLUS && symbol->getSymbolTag() != SYM_MINUS)
-        revoke();
-    while (true) {
+    SymbolTag tag = symbol->getSymbolTag();
+    if (tag == SYM_PLUS || tag == SYM_MINUS) {
         term();
+        // 处理负数
+        if (tag == SYM_MINUS)
+            emit(OPR, 0, MINUS);
+    } else {
+        revoke();
+        term();
+    }
+    while (true) {
         getSymbol();
         switch (symbol->getSymbolTag()) {
             // 处理正负号, +/-是expr的运算组成单元
             case SYM_PLUS:
+                term();
+                emit(OPR, 0, ADD);
+                break;
             case SYM_MINUS:
+                term();
+                emit(OPR, 0, SUB);
                 break;
             // 其他的符号交由term()处理
             default:
@@ -436,14 +524,18 @@ void Parser::term() {
     while (true) {
         getSymbol();
         switch (symbol->getSymbolTag()) {
-            case SYM_MUL: 
-            case SYM_DIV:                
+            case SYM_MUL:
+                factor();
+                emit(OPR, 0, MUL);
+                break;
+            case SYM_DIV:
+                factor();
+                emit(OPR, 0, DIV);       
                 break;
             default:
                 revoke();
                 return;
         }
-        factor();
     }
 }
 
@@ -457,9 +549,15 @@ void Parser::factor() {
             identifier = findIdentifier(symbol->getValue());
             if (identifier == NULL)
                 throw ParserException("Factor: Undefined Identifier!");
-            if (identifier->kind != VAR && identifier->kind != CONST)
+            if (identifier->kind == CONST)
+                emit(LIT, 0, identifier->value);
+            else if (identifier->kind == VAR)
+                emit(LOD, level - identifier->level, identifier->addr);
+            else 
                 throw ParserException("Factor: Invalid Identifier!");
+            break;
         case SYM_NUMBER:
+            emit(LIT, 0, atoi(symbol->getValue().c_str()));
             break;
         // 左括号
         case SYM_LPAREN:

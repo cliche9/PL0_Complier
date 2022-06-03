@@ -14,6 +14,7 @@ using std::ofstream;
 using std::string;
 using std::vector;
 using std::map;
+using std::to_string;
 
 enum SymbolTag {
     SYM_NONE,

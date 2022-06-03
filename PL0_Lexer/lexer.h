@@ -4,6 +4,7 @@
 #include "../common/symbol.h"
 #include <iostream>
 #include <list>
+using std::list;
 
 class Lexer {
 public:
