@@ -1,4 +1,3 @@
-#include "../common/exception.h"
 #include "parser.h"
 
 Parser::Parser(Lexer *lexer): lexer(lexer), symbol(NULL), level(0), dx(3) {
@@ -34,14 +33,12 @@ void Parser::printCode(ostream &out) const {
         ins.print(out);
 }
 
-void Parser::enter(string _name, KIND _kind, int _val, int _lev, int _addr) {
-    table[level].emplace_back(_name, _kind, _val, _lev, _addr);
+vector<Instruction> Parser::getCode() const {
+    return code;
 }
 
-void Parser::backpatch(int lev, int index, int val) {
-    if (index >= table[lev].size())
-        throw ParserException("Backpatch: Out of Table Index!");
-    table[lev][index].value = val;
+void Parser::enter(string _name, KIND _kind, int _val, int _lev, int _addr) {
+    table[level].emplace_back(_name, _kind, _val, _lev, _addr);
 }
 
 void Parser::emit(INSTRUCTION ins, int lev, int offset) {

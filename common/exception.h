@@ -26,4 +26,14 @@ protected:
     string message;
 };
 
+class InterpreterException: public exception {
+public: 
+    InterpreterException(string msg): message(msg) {}
+    const char *what()const throw() {
+        return message.c_str();
+    }
+protected:
+    string message;
+};
+
 #endif

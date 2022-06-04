@@ -1,10 +1,8 @@
 #ifndef _LEXER_H_
 #define _LEXER_H_
 
+#include "../common/common.h"
 #include "../common/symbol.h"
-#include <iostream>
-#include <list>
-using std::list;
 
 class Lexer {
 public:

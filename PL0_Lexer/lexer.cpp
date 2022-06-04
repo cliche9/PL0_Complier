@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include "../common/exception.h"
 
 Lexer::Lexer(istream &in)
     : inFile(in), line(0), offset(0) {}
