@@ -2,26 +2,53 @@
 #include <fstream>
 
 int main() {
-    ifstream fin("PL0_code2022/input/PL0_code1.in");
-    ofstream lout("PL0_code2022/lexer_output/PL0_code.out");
-    ofstream pout("PL0_code2022/parser_output/PL0_table_symbol.out");
-    ofstream codeout("PL0_code2022/parser_output/PL0_table_code.out");
-    Lexer lexer(fin);
-    try {
-        lexer.symbolization();
-        lexer.printAll(lout);
-    } catch (exception &e) {
-        cout << e.what() << endl;
-    }
+    ifstream fin[5] = {
+        ifstream("PL0_code2022/input/PL0_code.in"),
+        ifstream("PL0_code2022/input/PL0_code0.in"),
+        ifstream("PL0_code2022/input/PL0_code1.in"),
+        ifstream("PL0_code2022/input/PL0_code2.in"),
+        ifstream("PL0_code2022/input/PL0_code3.in"),
+    };
+    ofstream lex_out[5] = {
+        ofstream("PL0_code2022/lexer_output/PL0_code.out"),
+        ofstream("PL0_code2022/lexer_output/PL0_code0.out"),
+        ofstream("PL0_code2022/lexer_output/PL0_code1.out"),
+        ofstream("PL0_code2022/lexer_output/PL0_code2.out"),
+        ofstream("PL0_code2022/lexer_output/PL0_code3.out"),
+    };
+    ofstream symbol_out[5] = {
+        ofstream("PL0_code2022/parser_output/PL0_code_symbol.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code0_symbol.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code1_symbol.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code2_symbol.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code3_symbol.out"),
+    };
+    ofstream code_out[5] = {
+        ofstream("PL0_code2022/parser_output/PL0_code_code.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code0_code.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code1_code.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code2_code.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code3_code.out"),
+    };
 
-    Parser parser(&lexer);
-    try {
-        parser.program();
-    } catch (exception &e) {
-        cout << e.what() << endl;
+    for (int i = 0; i < 5; i++) {
+        Lexer lexer(fin[i]);
+        try {
+            lexer.symbolization();
+            lexer.printAll(lex_out[i]);
+        } catch (exception &e) {
+            cout << e.what() << endl;
+        }
+
+        Parser parser(&lexer);
+        try {
+            parser.program();
+        } catch (exception &e) {
+            cout << e.what() << endl;
+        }
+        parser.printTable(symbol_out[i]);
+        parser.printCode(code_out[i]);
     }
-    parser.printTable(pout);
-    parser.printCode(codeout);
     
     return 0;
 }

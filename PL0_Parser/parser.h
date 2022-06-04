@@ -7,8 +7,11 @@
 #include <vector>
 #include <set>
 #include <stack>
+#include <iomanip>
 using std::set;
 using std::stack;
+using std::setiosflags;
+using std::setw;
 
 /* ============ 符号表(标识符)相关定义 ============ */ 
 enum KIND {
@@ -30,7 +33,12 @@ struct Identifier {
         name(_name), kind(_kind), value(_val), level(_lev), addr(_addr) {}
     
     void print(ostream &out) const {
-        out << "NAME: " << name << "\tKIND: " << kind2str[kind] << "\tVAL: " << value << "\tLEVEL: " << level << "\tADR: " << addr << endl;
+        out << "NAME: " << setiosflags(std::ios::left) << setw(10) << name
+            << "KIND: " << setiosflags(std::ios::left) << setw(10) << kind2str[kind] 
+            << "VAL: " << setiosflags(std::ios::left) << setw(10) << value 
+            << "LEVEL: " << setiosflags(std::ios::left) << setw(10) << level 
+            << "ADR: " << setiosflags(std::ios::left) << setw(10) << addr 
+            << endl;
     }
 
     string name;

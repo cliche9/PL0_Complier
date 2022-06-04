@@ -21,9 +21,12 @@ void Parser::program() {
 }
 
 void Parser::printTable(ostream &out) const {
-    for (int i = 0; i < RECURSIVE_DEPTH; i++)
+    for (int i = 0; i < RECURSIVE_DEPTH; i++) {
+        if (!table[i].empty())
+            out << "TX" << i << " ->" << endl;
         for (const Identifier &identifier : table[i])
             identifier.print(out);
+    }
 }
 
 void Parser::printCode(ostream &out) const {
