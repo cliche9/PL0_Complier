@@ -95,9 +95,9 @@ void Parser::block() {
     declares();
 
     if (level == 0)
-        mainCode = code.size() + 1;
+        mainCode = code.size();
     else
-        table[level - 1].back().addr = code.size() + 1;
+        table[level - 1].back().addr = code.size();
 
     emit(INT, 0, addr[level]);  // 初始化栈空间
 

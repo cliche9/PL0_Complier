@@ -31,7 +31,7 @@ const vector<string> ins2str = {
 };
 
 enum OPERATOR {
-    NOP,
+    END,
     ADD,
     SUB,
     MUL,
@@ -46,6 +46,24 @@ enum OPERATOR {
     READ,
     MINUS,
     ODD,
+};
+
+const vector<string> opr2str = {
+    "END",
+    "ADD",
+    "SUB",
+    "MUL",
+    "DIV",
+    "LSS",
+    "LEQ",
+    "GTR",
+    "GEQ",
+    "EQL",
+    "NEQ",
+    "WRITE",
+    "READ",
+    "MINUS",
+    "ODD",
 };
 
 struct Instruction {
