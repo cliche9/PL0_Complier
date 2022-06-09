@@ -19,7 +19,7 @@ int main() {
         ofstream("PL0_code2022/interpreter_output/PL0_log3.out"),
     };
 
-    for (int i = 3; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         Lexer lexer(fin[i]);
         try {
             lexer.symbolization();

@@ -1,17 +1,17 @@
 #include "parser.h"
 
-Parser::Parser(Lexer *lexer): lexer(lexer), symbol(NULL), level(0), dx(3) {
+Parser::Parser(Lexer *lexer): lexer(lexer), symbol(NULL), level(0), dx(3), tempNumber(0) {
     for (int i = 0; i < RECURSIVE_DEPTH; i++)
         addr[i] = 3;
 }
 
 void Parser::program() {
     int codeIndex0 = code.size();
+    int quadIndex0 = quads.size();
     // JMP指令
     emit(JMP, 0, 0);
+    generate("j", "-", "-", "-");
     block();
-    // 回填JMP指令
-    code[codeIndex0].offset = mainCode;
 
     getSymbol();
     if (symbol->getSymbolTag() != SYM_PERIOD)
@@ -33,6 +33,11 @@ void Parser::printCode(ostream &out) const {
         ins.print(out);
 }
 
+void Parser::printQuad(ostream &out) const {
+    for (const Quadifier &quad : quads)
+        quad.print(out);
+}
+
 vector<Instruction> Parser::getCode() const {
     return code;
 }
@@ -45,25 +50,40 @@ void Parser::emit(INSTRUCTION ins, int lev, int offset) {
     code.emplace_back(ins, lev, offset);
 }
 
-#ifdef QUAD
 string Parser::newTemp() {
     return "$T" + to_string(tempNumber++);
 }
 
 void Parser::pushStack(string s) {
-    qStack.push(s);
+    qStack.push_back(s);
 }
 
 string Parser::popStack() {
-    string s = qStack.top();
-    qStack.pop();
+    string s = qStack.back();
+    qStack.pop_back();
     return s;
 }
 
 void Parser::generate(string _op, string _arg1, string _arg2, string _result) {
     quads.emplace_back(_op, _arg1, _arg2, _result);
 }
-#endif
+
+void Parser::monomialQuad(string opr) {
+    string arg1, temp;
+    arg1 = popStack();
+    temp = newTemp();
+    generate(opr, arg1, "-", temp);
+    pushStack(temp);
+}
+
+void Parser::binomialQuad(string opr) {
+    string arg1, arg2, temp;
+    arg2 = popStack();
+    arg1 = popStack();
+    temp = newTemp();
+    generate(opr, arg1, arg2, temp);
+    pushStack(temp);
+}
 
 void Parser::getSymbol() {
     if (symbol) {
@@ -94,16 +114,24 @@ void Parser::block() {
     
     declares();
 
-    if (level == 0)
-        mainCode = code.size();
-    else
+    if (level == 0) {
+        // 回填主程序JMP指令
+        code[0].offset = code.size();
+        // 回填主程序j指令
+        quads[0].result = to_string(quads.size());
+    }
+    else {
         table[level - 1].back().addr = code.size();
+        table[level - 1].back().quadAddr = quads.size();
+    }
 
     emit(INT, 0, addr[level]);  // 初始化栈空间
+    generate("init", "-", "-", to_string(addr[level]));
 
     statements();
 
     emit(OPR, 0, 0);            // 退出数据区
+    generate("j", "-", "-", "0");
 }
 
 void Parser::declares() {
@@ -158,6 +186,8 @@ void Parser::constDeclare() {
         
         // 5. 读取完毕, 将读取的值放入Table
         enter(constName, KIND::CONST, stoi(symbol->getValue()), -1, -1);
+        // const四元式
+        generate("const", symbol->getValue(), "-", constName);
         // 6. 读取分界符
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -185,6 +215,8 @@ void Parser::varDeclare() {
             throw ParserException("Var: Invalid Name!");
         // 3. 将 var 加入Table, 初始值为0
         enter(symbol->getValue(), KIND::VAR, 0, level, addr[level]++);
+        // var四元式
+        generate("var", "-", "-", symbol->getValue());
         // 4. 读取分界符
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -211,6 +243,8 @@ void Parser::procDeclare() {
             throw ParserException("Proc: Invalid Name!");
         // 3. 将 proc 加入table
         enter(symbol->getValue(), KIND::PROC, -1, level, -1);
+        // proc四元式
+        generate("proc", "-", "-", symbol->getValue());
         // 4. 读取分界符
         getSymbol();
         if (symbol->getSymbolTag() != SYM_SEMICOLON)
@@ -294,6 +328,8 @@ void Parser::assign() {
     expr();
     // 5. 生成目标代码, 读取栈顶
     emit(STO, level - identifier->level, identifier->addr);
+    // 6. 生成四元式, 赋值语句
+    generate(":=", popStack(), "-", identifier->name);
 }
 
 void Parser::compound() {
@@ -331,11 +367,15 @@ void Parser::condition() {
         throw ParserException("Condition: Expected THEN Here!");
     // 4. 生成JPC语句
     int codeIndex0 = code.size();
+    int quadIndex0 = quads.size();
     emit(JPC, 0, 0);
+    // 生成四元式: 条件跳转, 等待回填
+    generate("jz", popStack(), "-", "-");
     // 5. 执行后续语句
     statements();
     // 6. 回填jpc地址
     code[codeIndex0].offset = code.size();
+    quads[quadIndex0].result = to_string(quads.size());
 }
 
 void Parser::call() {
@@ -352,6 +392,8 @@ void Parser::call() {
     if (identifier == NULL || identifier->kind != PROC)
         throw ParserException("Call: Invalid Identifier!");
     emit(CAL, level - identifier->level, identifier->addr);
+    // 4. 生成四元式: call
+    generate("call", "-", "-", to_string(identifier->quadAddr));
 }
 
 void Parser::whiledo() {
@@ -360,10 +402,15 @@ void Parser::whiledo() {
     if (symbol->getSymbolTag() != SYM_WHILE)
         throw ParserException("WHILEDO: Expected WHILE Here!");
     // 2. 执行条件语句判断
+    // index0: while判定语句的位置, 即while的起点
+    // index1: 条件跳转语句的位置
     int codeIndex0 = code.size();
+    int quadIndex0 = quads.size();
     cond();
     int codeIndex1 = code.size();
+    int quadIndex1 = quads.size();
     emit(JPC, 0, 0);
+    generate("jz", popStack(), "-", "-");
     // 3. 读取DO
     getSymbol();
     if (symbol->getSymbolTag() != SYM_DO)
@@ -372,7 +419,9 @@ void Parser::whiledo() {
     statements();
 
     emit(JMP, 0, codeIndex0);
+    generate("j", "-", "-", to_string(quadIndex0));
     code[codeIndex1].offset = code.size();
+    quads[quadIndex1].result = to_string(quads.size());
 }
 
 void Parser::read() {
@@ -397,6 +446,8 @@ void Parser::read() {
             throw ParserException("READ: Invalid Identifier!");
         emit(OPR, 0, READ);
         emit(STO, level - identifier->level, identifier->addr);
+        // 生成四元式: read
+        generate("read", "-", "-", identifier->name);
         
         // 读取分界符, 看是否继续循环
         getSymbol();
@@ -426,6 +477,8 @@ void Parser::write() {
         expr();
         // 生成WRITE语句
         emit(OPR, 0, WRITE);
+        // 生成四元式: write
+        generate("write", "-", "-", popStack());
         // 读取分界符, 看是否继续循环
         getSymbol();
         switch (symbol->getSymbolTag()) {
@@ -441,11 +494,14 @@ void Parser::write() {
 
 /* === condition语句判断 === */
 void Parser::cond() {
+    string arg1, arg2, temp;
     getSymbol();
     // odd指令, 判断是否为奇数, 只需读取一个expr即可
     if (symbol->getSymbolTag() == SYM_ODD) {
         expr();
         emit(OPR, 0, ODD);
+        // 生成四元式: 奇数判定
+        monomialQuad("odd");
         return;
     }
     // 其他指令
@@ -457,26 +513,32 @@ void Parser::cond() {
         case SYM_EQL:
             expr();
             emit(OPR, 0, EQL);
+            binomialQuad("==");
             break;
         case SYM_NEQ:
             expr();
             emit(OPR, 0, NEQ);
+            binomialQuad("!=");
             break;
         case SYM_LSS:
             expr();
             emit(OPR, 0, LSS);
+            binomialQuad("<");
             break;
         case SYM_LEQ:
             expr();
             emit(OPR, 0, LEQ);
+            binomialQuad("<=");
             break;
         case SYM_GTR:
             expr();
             emit(OPR, 0, GTR);
+            binomialQuad(">");
             break;
         case SYM_GEQ:
             expr();
             emit(OPR, 0, GEQ);
+            binomialQuad(">=");
             break;
         default:
             throw ParserException("Cond: Invalid Symbol Tag!");
@@ -485,14 +547,18 @@ void Parser::cond() {
 
 /* === 读取一个expr, expr由多个term通过+/-运算组合而成, 如 a * b + c === */
 void Parser::expr() {
+    string arg1, arg2, temp;
     // 单独读取一次, 以处理+/-表示正负数
     getSymbol();
     SymbolTag tag = symbol->getSymbolTag();
     if (tag == SYM_PLUS || tag == SYM_MINUS) {
         term();
         // 处理负数
-        if (tag == SYM_MINUS)
+        if (tag == SYM_MINUS) {
             emit(OPR, 0, MINUS);
+            // 生成四元式: 负数
+            monomialQuad("uminus");
+        }
     } else {
         revoke();
         term();
@@ -504,10 +570,14 @@ void Parser::expr() {
             case SYM_PLUS:
                 term();
                 emit(OPR, 0, ADD);
+                // 生成四元式: 加法
+                binomialQuad("+");
                 break;
             case SYM_MINUS:
                 term();
                 emit(OPR, 0, SUB);
+                // 生成四元式: 减法
+                binomialQuad("-");
                 break;
             // 其他的符号交由term()处理
             default:
@@ -521,16 +591,21 @@ void Parser::expr() {
 void Parser::term() {
     // 用于处理首个标识符号
     factor();
+    string arg1, arg2, temp;
     while (true) {
         getSymbol();
         switch (symbol->getSymbolTag()) {
             case SYM_MUL:
                 factor();
                 emit(OPR, 0, MUL);
+                // 生成四元式: 乘法
+                binomialQuad("*");
                 break;
             case SYM_DIV:
                 factor();
-                emit(OPR, 0, DIV);       
+                emit(OPR, 0, DIV);
+                // 生成四元式: 除法
+                binomialQuad("/");
                 break;
             default:
                 revoke();
@@ -555,9 +630,11 @@ void Parser::factor() {
                 emit(LOD, level - identifier->level, identifier->addr);
             else 
                 throw ParserException("Factor: Invalid Identifier!");
+            pushStack(identifier->name);
             break;
         case SYM_NUMBER:
             emit(LIT, 0, atoi(symbol->getValue().c_str()));
+            pushStack(symbol->getValue());
             break;
         // 左括号
         case SYM_LPAREN:

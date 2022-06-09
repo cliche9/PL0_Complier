@@ -22,6 +22,13 @@ int main() {
         ofstream("PL0_code2022/parser_output/PL0_code2_code.out"),
         ofstream("PL0_code2022/parser_output/PL0_code3_code.out"),
     };
+    ofstream quad_out[5] = {
+        ofstream("PL0_code2022/parser_output/PL0_code_quad.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code0_quad.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code1_quad.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code2_quad.out"),
+        ofstream("PL0_code2022/parser_output/PL0_code3_quad.out"),
+    };
 
     for (int i = 0; i < 5; i++) {
         Lexer lexer(fin[i]);
@@ -40,6 +47,7 @@ int main() {
         }
         parser.printTable(symbol_out[i]);
         parser.printCode(code_out[i]);
+        parser.printQuad(quad_out[i]);
         symbol_out[i].close();
         code_out[i].close();
     }

@@ -9,7 +9,7 @@ struct Quadifier {
         : op(_op), arg1(_arg1), arg2(_arg2), result(_result) {}
     
     void print(ostream &out) const {
-        out << "(" << op << ", " << arg1 << ", " << arg2 << ", " << result << ")";
+        out << "(" << op << ", " << arg1 << ", " << arg2 << ", " << result << ")" << endl;
     }
     
     string op, arg1, arg2, result;

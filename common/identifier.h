@@ -22,8 +22,8 @@ const vector<string> kind2str = {
 };
 
 struct Identifier {
-    Identifier(string _name = "", KIND _kind = NIL, int _val = 0, int _lev = -1, int _addr = -1):
-        name(_name), kind(_kind), value(_val), level(_lev), addr(_addr) {}
+    Identifier(string _name = "", KIND _kind = NIL, int _val = 0, int _lev = -1, int _addr = -1, int _quadAddr = -1):
+        name(_name), kind(_kind), value(_val), level(_lev), addr(_addr), quadAddr(_quadAddr) {}
     
     void print(ostream &out) const {
         out << "NAME: " << setiosflags(std::ios::left) << setw(10) << name
@@ -36,7 +36,7 @@ struct Identifier {
 
     string name;
     KIND kind;
-    int value, level, addr;
+    int value, level, addr, quadAddr;
 };
 
 #endif
