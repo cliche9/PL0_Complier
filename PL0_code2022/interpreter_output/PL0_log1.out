@@ -1,0 +1,505 @@
+PC: 0
+BP: 0
+Instruction: ( JMP, 0, 7 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+
+PC: 7
+BP: 0
+Instruction: ( INT, 0, 5 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 0
+
+PC: 8
+BP: 0
+Instruction: ( OPR, 0, READ )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 0
+	5: 5
+
+PC: 9
+BP: 0
+Instruction: ( STO, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+
+PC: 10
+BP: 0
+Instruction: ( LOD, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 5
+
+PC: 11
+BP: 0
+Instruction: ( LIT, 0, 0 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 5
+	6: 0
+
+PC: 12
+BP: 0
+Instruction: ( OPR, 0, NEQ )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 1
+
+PC: 13
+BP: 0
+Instruction: ( JPC, 0, 22 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+
+PC: 14
+BP: 0
+Instruction: ( CAL, 0, 1 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 15
+	6: 0
+	7: 0
+
+PC: 1
+BP: 5
+Instruction: ( INT, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 15
+	6: 0
+	7: 0
+
+PC: 2
+BP: 5
+Instruction: ( LOD, 1, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 15
+	6: 0
+	7: 0
+	8: 5
+
+PC: 3
+BP: 5
+Instruction: ( LIT, 0, 10 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 15
+	6: 0
+	7: 0
+	8: 5
+	9: 10
+
+PC: 4
+BP: 5
+Instruction: ( OPR, 0, ADD )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 0
+	5: 15
+	6: 0
+	7: 0
+	8: 15
+
+PC: 5
+BP: 5
+Instruction: ( STO, 1, 4 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 15
+	5: 15
+	6: 0
+	7: 0
+
+PC: 6
+BP: 5
+Instruction: ( OPR, 0, END )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 15
+
+PC: 15
+BP: 0
+Instruction: ( LIT, 0, 2 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 15
+	5: 2
+
+PC: 16
+BP: 0
+Instruction: ( LOD, 0, 4 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 15
+	5: 2
+	6: 15
+
+PC: 17
+BP: 0
+Instruction: ( OPR, 0, MUL )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 15
+	5: 30
+
+PC: 18
+BP: 0
+Instruction: ( OPR, 0, WRITE )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 15
+
+PC: 19
+BP: 0
+Instruction: ( OPR, 0, READ )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 5
+	4: 15
+	5: 2
+
+PC: 20
+BP: 0
+Instruction: ( STO, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+
+PC: 21
+BP: 0
+Instruction: ( JMP, 0, 10 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+
+PC: 10
+BP: 0
+Instruction: ( LOD, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 2
+
+PC: 11
+BP: 0
+Instruction: ( LIT, 0, 0 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 2
+	6: 0
+
+PC: 12
+BP: 0
+Instruction: ( OPR, 0, NEQ )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 1
+
+PC: 13
+BP: 0
+Instruction: ( JPC, 0, 22 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+
+PC: 14
+BP: 0
+Instruction: ( CAL, 0, 1 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 15
+	6: 0
+	7: 0
+
+PC: 1
+BP: 5
+Instruction: ( INT, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 15
+	6: 0
+	7: 0
+
+PC: 2
+BP: 5
+Instruction: ( LOD, 1, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 15
+	6: 0
+	7: 0
+	8: 2
+
+PC: 3
+BP: 5
+Instruction: ( LIT, 0, 10 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 15
+	6: 0
+	7: 0
+	8: 2
+	9: 10
+
+PC: 4
+BP: 5
+Instruction: ( OPR, 0, ADD )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 15
+	5: 15
+	6: 0
+	7: 0
+	8: 12
+
+PC: 5
+BP: 5
+Instruction: ( STO, 1, 4 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 12
+	5: 15
+	6: 0
+	7: 0
+
+PC: 6
+BP: 5
+Instruction: ( OPR, 0, END )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 12
+
+PC: 15
+BP: 0
+Instruction: ( LIT, 0, 2 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 12
+	5: 2
+
+PC: 16
+BP: 0
+Instruction: ( LOD, 0, 4 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 12
+	5: 2
+	6: 12
+
+PC: 17
+BP: 0
+Instruction: ( OPR, 0, MUL )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 12
+	5: 24
+
+PC: 18
+BP: 0
+Instruction: ( OPR, 0, WRITE )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 12
+
+PC: 19
+BP: 0
+Instruction: ( OPR, 0, READ )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 2
+	4: 12
+	5: 0
+
+PC: 20
+BP: 0
+Instruction: ( STO, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 12
+
+PC: 21
+BP: 0
+Instruction: ( JMP, 0, 10 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 12
+
+PC: 10
+BP: 0
+Instruction: ( LOD, 0, 3 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 12
+	5: 0
+
+PC: 11
+BP: 0
+Instruction: ( LIT, 0, 0 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 12
+	5: 0
+	6: 0
+
+PC: 12
+BP: 0
+Instruction: ( OPR, 0, NEQ )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 12
+	5: 0
+
+PC: 13
+BP: 0
+Instruction: ( JPC, 0, 22 )
+=== Stack ===
+	0: 0
+	1: 0
+	2: 0
+	3: 0
+	4: 12
+

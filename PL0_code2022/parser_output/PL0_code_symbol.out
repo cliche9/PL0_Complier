@@ -1,0 +1,17 @@
+TX0 ->
+NAME: x         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 3         
+NAME: y         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 4         
+NAME: z         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 5         
+NAME: q         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 6         
+NAME: r         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 7         
+NAME: n         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 8         
+NAME: f         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 9         
+NAME: multiply  KIND: PROCEDURE VAL: -1        LEVEL: 0         ADR: 1         
+NAME: divide    KIND: PROCEDURE VAL: -1        LEVEL: 0         ADR: 11        
+NAME: gcd       KIND: PROCEDURE VAL: -1        LEVEL: 0         ADR: 53        
+NAME: fact      KIND: PROCEDURE VAL: -1        LEVEL: 0         ADR: 82        
+TX1 ->
+NAME: a         KIND: VARIABLE  VAL: 0         LEVEL: 1         ADR: 3         
+NAME: b         KIND: VARIABLE  VAL: 0         LEVEL: 1         ADR: 4         
+NAME: w         KIND: VARIABLE  VAL: 0         LEVEL: 1         ADR: 3         
+NAME: g         KIND: VARIABLE  VAL: 0         LEVEL: 1         ADR: 3         

@@ -1,0 +1,10 @@
+*
+
+!.gitignore
+!*.h
+!*.cpp
+!*.md
+
+!*/
+!*.in
+!*.out

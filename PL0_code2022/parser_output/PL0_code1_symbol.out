@@ -1,0 +1,5 @@
+TX0 ->
+NAME: a         KIND: CONSTANT  VAL: 10        LEVEL: -1        ADR: -1        
+NAME: b         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 3         
+NAME: c         KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 4         
+NAME: p         KIND: PROCEDURE VAL: -1        LEVEL: 0         ADR: 1         

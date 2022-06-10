@@ -1,0 +1,8 @@
+TX0 ->
+NAME: max       KIND: CONSTANT  VAL: 100       LEVEL: -1        ADR: -1        
+NAME: arg       KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 3         
+NAME: ret       KIND: VARIABLE  VAL: 0         LEVEL: 0         ADR: 4         
+NAME: isprime   KIND: PROCEDURE VAL: -1        LEVEL: 0         ADR: 1         
+TX1 ->
+NAME: i         KIND: VARIABLE  VAL: 0         LEVEL: 1         ADR: 3         
+NAME: j         KIND: VARIABLE  VAL: 0         LEVEL: 1         ADR: 4         
