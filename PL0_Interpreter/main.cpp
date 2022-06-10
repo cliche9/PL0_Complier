@@ -4,19 +4,19 @@
 
 int main() {
     ifstream fin[5] = {
-        ifstream("PL0_code2022/input/PL0_code.in"),
-        ifstream("PL0_code2022/input/PL0_code0.in"),
-        ifstream("PL0_code2022/input/PL0_code1.in"),
-        ifstream("PL0_code2022/input/PL0_code2.in"),
-        ifstream("PL0_code2022/input/PL0_code3.in"),
+        ifstream("../PL0_code2022/input/PL0_code.in"),
+        ifstream("../PL0_code2022/input/PL0_code0.in"),
+        ifstream("../PL0_code2022/input/PL0_code1.in"),
+        ifstream("../PL0_code2022/input/PL0_code2.in"),
+        ifstream("../PL0_code2022/input/PL0_code3.in"),
     };
 
     ofstream logger[5] = {
-        ofstream("PL0_code2022/interpreter_output/PL0_log.out"),
-        ofstream("PL0_code2022/interpreter_output/PL0_log0.out"),
-        ofstream("PL0_code2022/interpreter_output/PL0_log1.out"),
-        ofstream("PL0_code2022/interpreter_output/PL0_log2.out"),
-        ofstream("PL0_code2022/interpreter_output/PL0_log3.out"),
+        ofstream("../PL0_code2022/interpreter_output/PL0_log.out"),
+        ofstream("../PL0_code2022/interpreter_output/PL0_log0.out"),
+        ofstream("../PL0_code2022/interpreter_output/PL0_log1.out"),
+        ofstream("../PL0_code2022/interpreter_output/PL0_log2.out"),
+        ofstream("../PL0_code2022/interpreter_output/PL0_log3.out"),
     };
 
     for (int i = 0; i < 5; i++) {

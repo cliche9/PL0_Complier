@@ -3,6 +3,7 @@
 !.gitignore
 !*.h
 !*.cpp
+!*.sh
 !*.md
 实验报告.md
 
