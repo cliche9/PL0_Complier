@@ -5,8 +5,9 @@
 !*.cpp
 !*.sh
 !*.md
-实验报告.md
 
 !*/
 !*.in
 !*.out
+code/*
+实验*.md
